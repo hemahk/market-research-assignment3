@@ -1,0 +1,134 @@
+---
+title: "MAX-503 Assignment 3"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+setwd("C:/Users/Hema/Desktop/Market Research/Mark Research - Assignment 3")
+getwd()
+ecomm.df <- read.csv("ecommerce-data.csv")
+str(ecomm.df)
+
+```
+
+
+5. Plot a histogram of the newly added integer estimate of page views (pageviewInt).
+```{r}
+#Adding new integer variable, pageviewInt
+pageViewInt <- rep(NA, length(ecomm.df$behavPageviews))
+pageViewInt[ecomm.df$behavPageviews=="0"] <- 0
+pageViewInt[ecomm.df$behavPageviews=="1"] <- 1
+pageViewInt[ecomm.df$behavPageviews=="2 to 3"] <- 2
+pageViewInt[ecomm.df$behavPageviews=="4 to 6"] <- 4
+pageViewInt[ecomm.df$behavPageviews=="7 to 9"] <- 7
+pageViewInt[ecomm.df$behavPageviews=="10+"] <- 10
+ecomm.df$pageViewInt <- pageViewInt
+
+hist(ecomm.df$pageViewInt, main = "Histogram of Page Views",
+     xlab = "Page Views")
+```
+
+
+6. For a first exploration, make a scatterplot for the integer estimate of page views vs. the number of site visits.
+It’s better to have the number of visits on a log scale.
+```{r}
+plot(ecomm.df$pageViewInt ~ ecomm.df$behavNumVisits,
+     main = "Page Views vs. Site Visits",
+     ylab = "Number of Page Views", xlab = "Number of Site Visits",
+     log = "x")
+```
+
+
+7. There are only a few values of X and Y in the previous plot. Adjust the plot to visualize more clearly the frequencies occurring at each point on the plot.
+```{r}
+plot(jitter(ecomm.df$pageViewInt) ~ jitter(ecomm.df$behavNumVisits),
+     main = "Page Views vs. Site Visits",
+     ylab = "Number of Page Views", xlab = "Number of Site Visits", log = "x")
+
+```
+
+
+8. What is the Pearson’s r correlation coefficient between number of visits and the integer estimate of page views?
+```{r}
+cor(ecomm.df$pageViewInt, ecomm.df$behavNumVisits)
+
+```
+The correlation between number of visits and the integer estimate of page views is 0.005626593
+
+What is the correlation if you use log of visits instead?
+```{r}
+cor(ecomm.df$pageViewInt, log(ecomm.df$behavNumVisits))
+
+```
+The correlation between log of number of visits and the integer estimate of page views is 0.04003549
+
+
+9. Is the correlation from the previous exercise statistically significant?
+```{r}
+cor.test(ecomm.df$pageViewInt, ecomm.df$behavNumVisits)
+
+```
+As the p-value = 0.8224, it is more than the significance level (0.05).
+This means that we fail to reject the null hypothesis.
+Therefore, this indicates that the correlation is not statistically significant.
+
+```{r}
+cor.test(ecomm.df$pageViewInt, log(ecomm.df$behavNumVisits))
+
+```
+As the p-value = 0.1102, it is more than the significance level (0.05).
+This means that we fail to reject the null hypothesis.
+Therefore, this indicates that the correlation is not statistically significant.
+
+
+For the remaining exercises, we use the Salaries data from the car package.
+```{r}
+library(car)
+
+```
+
+10. How do you load the Salaries data from the car package?
+(Hint: review the data() function)
+```{r}
+data("Salaries")
+
+```
+
+Within R itself, how can you find out more detail about the Salaries data set?
+```{r}
+?Salaries
+
+```
+
+
+11. Using the Salaries data, create scatterplot matrix plots using
+two different plotting functions. Which do you prefer and why?
+```{r}
+pairs(formula = ~ rank + discipline + yrs.since.phd + yrs.service + sex + salary, data = Salaries)
+
+```
+```{r}
+scatterplotMatrix(formula = ~ rank + discipline + yrs.since.phd + yrs.service + sex + salary, data = Salaries)
+
+```
+Scatterplot Matrix is better because it details both the correlation and distribution of variables.
+
+
+12. Which are the numeric variables in the Salaries data set?
+```{r}
+str(Salaries)
+
+```
+Numeric variables are yrs.since.phd, yrs.service, & salary.
+
+Create a correlation plot for them, with correlation coefficients in one area of the plot.
+Which two variables are most closely related?
+```{r}
+library(corrplot)
+corrplot.mixed(cor(Salaries[,c(3,4,6)]))
+
+```
+The two variables that are the most closely related are yrs.since.phd & yrs.service
+
